@@ -1,3 +1,4 @@
 # cvi-gi-rte-
 แจกไฟล์บอทดิสคอร์ด
-ดาวน์โหลด /README.md
+เข้าร่วมดิสคอร์ด 
+https://discord.gg/SNtssBvE9
