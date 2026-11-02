@@ -1,6 +1,6 @@
 # Zyro AI Android
 
-แอปแชต AI สำหรับ Android พร้อมหน้าตาโทนเข้มและตัวช่วยเขียนโค้ด
+แอป Android สำหรับ Ethical Hacking, Cybersecurity และการเขียนโค้ด โดยเน้นการทดสอบที่ได้รับอนุญาต การป้องกันระบบ การตรวจสอบโค้ด และการฝึกในแล็บ
 
 ## สร้าง APK ผ่าน GitHub Actions
 1. เปิดแท็บ **Actions** ใน repository
