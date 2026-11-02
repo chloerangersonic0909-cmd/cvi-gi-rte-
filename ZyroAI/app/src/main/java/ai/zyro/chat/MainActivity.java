@@ -58,20 +58,20 @@ public class MainActivity extends Activity {
         LinearLayout titles = new LinearLayout(this); titles.setOrientation(LinearLayout.VERTICAL);
         titles.setPadding(dp(12), 0, 0, 0);
         titles.addView(text("Zyro AI", 22, Color.WHITE, true));
-        titles.addView(text("AI Chat • Code Assistant", 12, cyan, false));
+        titles.addView(text("Ethical Hacking • Cybersecurity • Code", 12, cyan, false));
         header.addView(titles, new LinearLayout.LayoutParams(0, -2, 1));
         Button settings = button("⚙");
         header.addView(settings, new LinearLayout.LayoutParams(dp(48), dp(44)));
         root.addView(header);
 
-        TextView intro = text("ถามคำถาม เขียนโค้ด และระดมไอเดียได้ในที่เดียว", 14, Color.LTGRAY, false);
+        TextView intro = text("ผู้ช่วยเขียนโค้ดและความปลอดภัยไซเบอร์ สำหรับงานที่ได้รับอนุญาต", 14, Color.LTGRAY, false);
         intro.setPadding(0, dp(14), 0, dp(10)); root.addView(intro);
 
         scroll = new ScrollView(this);
         chat = new LinearLayout(this); chat.setOrientation(LinearLayout.VERTICAL); chat.setPadding(dp(2), dp(4), dp(2), dp(12));
         scroll.addView(chat);
         root.addView(scroll, new LinearLayout.LayoutParams(-1, 0, 1));
-        addMessage("Zyro AI", "สวัสดี! ตั้งค่า API key ก่อนเริ่มแชตได้ที่ปุ่ม ⚙️", false);
+        addMessage("Zyro AI • Cyber Lab", "พร้อมช่วยเขียนโค้ด วิเคราะห์ช่องโหว่ ป้องกันระบบ และฝึกในแล็บที่ได้รับอนุญาต ตั้งค่า API key ที่ปุ่ม ⚙️ เพื่อเริ่มต้น", false);
 
         LinearLayout composer = new LinearLayout(this);
         composer.setOrientation(LinearLayout.HORIZONTAL); composer.setGravity(Gravity.BOTTOM);
@@ -132,7 +132,7 @@ public class MainActivity extends Activity {
         c.setRequestProperty("Authorization", "Bearer " + key);
         JSONObject body = new JSONObject(); body.put("model", modelName);
         JSONArray messages = new JSONArray();
-        messages.put(new JSONObject().put("role", "system").put("content", "You are Zyro AI, a helpful assistant. Reply in the user's language."));
+        messages.put(new JSONObject().put("role", "system").put("content", "You are Zyro AI Cyber Lab, a specialist assistant for software engineering, ethical hacking, and defensive cybersecurity. Reply in the user's language, preferably Thai when the user writes Thai. Help with programming, debugging, secure code review, threat modeling, vulnerability explanations, security testing in systems the user owns or is explicitly authorized to test, CTF challenges, and isolated lab exercises. Give clear, practical code examples for benign and defensive use. For security testing, keep advice scoped to authorized targets and explain safe validation and remediation. Do not help steal credentials or data, deploy malware, evade detection, maintain unauthorized access, or compromise real third-party systems. If a request is ambiguous and could target a real system, ask for authorization/scope or provide a safe lab or defensive alternative. Be technically precise and do not claim code was tested unless it was."));
         messages.put(new JSONObject().put("role", "user").put("content", question));
         body.put("messages", messages);
         try (OutputStream out = c.getOutputStream()) { out.write(body.toString().getBytes(StandardCharsets.UTF_8)); }
