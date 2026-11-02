@@ -18,9 +18,9 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
 public class MainActivity extends Activity {
-    private final int bg = Color.rgb(10, 13, 24);
-    private final int panel = Color.rgb(21, 27, 45);
-    private final int cyan = Color.rgb(70, 210, 255);
+    private final int bg = Color.rgb(3, 7, 18);
+    private final int panel = Color.rgb(12, 22, 40);
+    private final int cyan = Color.rgb(50, 205, 255);
     private LinearLayout chat;
     private EditText prompt, apiKey, endpoint, model;
     private ScrollView scroll;
@@ -48,7 +48,7 @@ public class MainActivity extends Activity {
     }
     private void buildUi() {
         LinearLayout root = new LinearLayout(this);
-        root.setOrientation(LinearLayout.VERTICAL); root.setPadding(dp(16), dp(16), dp(16), dp(10));
+        root.setOrientation(LinearLayout.VERTICAL); root.setPadding(dp(16), dp(18), dp(16), dp(12));
         root.setBackgroundColor(bg);
         setContentView(root);
 
@@ -60,21 +60,22 @@ public class MainActivity extends Activity {
         header.addView(logo, new LinearLayout.LayoutParams(dp(48), dp(48)));
         LinearLayout titles = new LinearLayout(this); titles.setOrientation(LinearLayout.VERTICAL);
         titles.setPadding(dp(12), 0, 0, 0);
-        titles.addView(text("Zyro AI", 22, Color.WHITE, true));
-        titles.addView(text("Ethical Hacking • Cybersecurity • Code", 12, cyan, false));
+        titles.addView(text("Zyro AI Cyber Lab", 20, Color.WHITE, true));
+        titles.addView(text("VERSION 1.0  •  CYBER LAB", 10, cyan, true));
+        titles.addView(text("● ออนไลน์ • พร้อมช่วยคุณ", 12, Color.rgb(140, 220, 245), false));
         header.addView(titles, new LinearLayout.LayoutParams(0, -2, 1));
         Button settings = button("⚙");
         header.addView(settings, new LinearLayout.LayoutParams(dp(48), dp(44)));
         root.addView(header);
 
-        TextView intro = text("ผู้ช่วยเขียนโค้ดและความปลอดภัยไซเบอร์ สำหรับงานที่ได้รับอนุญาต", 14, Color.LTGRAY, false);
+        TextView intro = text("Zyro AI Cyber Lab-1.0\nผู้ช่วยเขียนโค้ด • วิเคราะห์ระบบ • Cybersecurity", 14, Color.LTGRAY, false);
         intro.setPadding(0, dp(14), 0, dp(10)); root.addView(intro);
 
         scroll = new ScrollView(this);
         chat = new LinearLayout(this); chat.setOrientation(LinearLayout.VERTICAL); chat.setPadding(dp(2), dp(4), dp(2), dp(12));
         scroll.addView(chat);
         root.addView(scroll, new LinearLayout.LayoutParams(-1, 0, 1));
-        addMessage("Zyro AI • Cyber Lab", "พร้อมช่วยเขียนโค้ด วิเคราะห์ช่องโหว่ ป้องกันระบบ และฝึกในแล็บที่ได้รับอนุญาต ตั้งค่า API key ที่ปุ่ม ⚙️ เพื่อเริ่มต้น", false);
+        addMessage("Zyro AI Cyber Lab-1.0", "ยินดีต้อนรับสู่ Cyber Lab\nพร้อมช่วยเขียนโค้ด วิเคราะห์ความปลอดภัย และฝึกในแล็บที่ได้รับอนุญาต\n\nแตะ ⚙ เพื่อกำหนด API Key, Endpoint และ Model", false);
 
         LinearLayout composer = new LinearLayout(this);
         composer.setOrientation(LinearLayout.HORIZONTAL); composer.setGravity(Gravity.BOTTOM);
@@ -92,12 +93,12 @@ public class MainActivity extends Activity {
     }
     private Button button(String label) {
         Button b = new Button(this); b.setText(label); b.setTextColor(Color.WHITE);
-        b.setAllCaps(false); b.setTextSize(14); b.setBackground(shape(Color.rgb(32, 105, 145), 14));
+        b.setAllCaps(false); b.setTextSize(14); b.setBackground(shape(Color.rgb(0, 135, 195), 16));
         return b;
     }
     private void addMessage(String who, String body, boolean user) {
         LinearLayout card = new LinearLayout(this); card.setOrientation(LinearLayout.VERTICAL);
-        card.setPadding(dp(12), dp(10), dp(12), dp(10)); card.setBackground(shape(user ? Color.rgb(24, 58, 83) : panel, 14));
+        card.setPadding(dp(12), dp(10), dp(12), dp(10)); card.setBackground(shape(user ? Color.rgb(10, 55, 83) : panel, 18));
         TextView label = text(who, 12, user ? cyan : Color.rgb(170, 190, 210), true);
         TextView content = text(body, 15, Color.WHITE, false); content.setPadding(0, dp(5), 0, 0);
         card.addView(label); card.addView(content);
@@ -162,7 +163,7 @@ public class MainActivity extends Activity {
         model = field("Model name", prefs.getString("model", ""), false); form.addView(model);
 
         android.app.AlertDialog dialog = new android.app.AlertDialog.Builder(this)
-            .setTitle(required ? "ตั้งค่า Zyro AI ก่อนเริ่มใช้งาน" : "ตั้งค่า Zyro AI")
+            .setTitle(required ? "ตั้งค่า Zyro AI Cyber Lab-1.0" : "ตั้งค่า Zyro AI Cyber Lab-1.0")
             .setMessage("ใส่ API Key, Endpoint URL และชื่อโมเดลจากผู้ให้บริการที่คุณเลือก ค่าจะถูกบันทึกไว้ในเครื่องนี้")
             .setView(form)
             .setPositiveButton(required ? "บันทึกและเริ่มใช้งาน" : "บันทึก", null)
