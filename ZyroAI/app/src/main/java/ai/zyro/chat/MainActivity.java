@@ -31,6 +31,9 @@ public class MainActivity extends Activity {
         super.onCreate(state);
         prefs = getSharedPreferences("zyro_settings", MODE_PRIVATE);
         buildUi();
+        if (prefs.getString("api_key", "").trim().isEmpty() || prefs.getString("endpoint", "").trim().isEmpty() || prefs.getString("model", "").trim().isEmpty()) {
+            new android.os.Handler(getMainLooper()).post(this::showRequiredSettings);
+        }
     }
 
     private TextView text(String value, int size, int color, boolean bold) {
@@ -85,7 +88,7 @@ public class MainActivity extends Activity {
         send.setOnClickListener(v -> sendMessage());
         prompt.setOnEditorActionListener((v, action, event) -> { sendMessage(); return true; });
 
-        settings.setOnClickListener(v -> showSettings());
+        settings.setOnClickListener(v -> showSettings(false));
     }
     private Button button(String label) {
         Button b = new Button(this); b.setText(label); b.setTextColor(Color.WHITE);
@@ -106,8 +109,8 @@ public class MainActivity extends Activity {
         if (busy) return;
         String question = prompt.getText().toString().trim();
         if (question.isEmpty()) return;
-        String key = prefs.getString("api_key", "");
-        if (key.isEmpty()) { addMessage("Zyro AI", "กรุณากด ⚙️ แล้วใส่ API key ก่อนใช้งาน", false); showSettings(); return; }
+        String key = prefs.getString("api_key", "").trim();
+        if (key.isEmpty() || prefs.getString("endpoint", "").trim().isEmpty() || prefs.getString("model", "").trim().isEmpty()) { showRequiredSettings(); return; }
         prompt.setText(""); addMessage("คุณ", question, true);
         busy = true; addMessage("Zyro AI", "กำลังคิด…", false);
         new Thread(() -> {
@@ -150,17 +153,46 @@ public class MainActivity extends Activity {
         }
         return json.getJSONArray("choices").getJSONObject(0).getJSONObject("message").optString("content", "ไม่มีข้อความตอบกลับ");
     }
-    private void showSettings() {
+    private void showSettings(boolean required) {
         LinearLayout form = new LinearLayout(this); form.setOrientation(LinearLayout.VERTICAL); form.setPadding(dp(8), dp(4), dp(8), dp(4));
-        apiKey = field("API key (เก็บไว้ในเครื่อง)", prefs.getString("api_key", ""), true); form.addView(apiKey);
-        endpoint = field("API endpoint", prefs.getString("endpoint", "https://api.openai.com/v1/chat/completions"), false); form.addView(endpoint);
-        model = field("Model", prefs.getString("model", "gpt-4o-mini"), false); form.addView(model);
-        new AlertDialogCompat(this, form, () -> {
-            prefs.edit().putString("api_key", apiKey.getText().toString().trim())
-                .putString("endpoint", endpoint.getText().toString().trim())
-                .putString("model", model.getText().toString().trim()).apply();
-            Toast.makeText(this, "บันทึกการตั้งค่าแล้ว", Toast.LENGTH_SHORT).show();
-        }).show();
+        TextView help = text("รองรับผู้ให้บริการที่ใช้ OpenAI-compatible Chat Completions API เท่านั้น", 12, cyan, false);
+        help.setPadding(0, 0, 0, dp(6)); form.addView(help);
+        apiKey = field("API Key", prefs.getString("api_key", ""), true); form.addView(apiKey);
+        endpoint = field("API Endpoint URL", prefs.getString("endpoint", ""), false); form.addView(endpoint);
+        model = field("Model name", prefs.getString("model", ""), false); form.addView(model);
+
+        android.app.AlertDialog dialog = new android.app.AlertDialog.Builder(this)
+            .setTitle(required ? "ตั้งค่า Zyro AI ก่อนเริ่มใช้งาน" : "ตั้งค่า Zyro AI")
+            .setMessage("ใส่ API Key, Endpoint URL และชื่อโมเดลจากผู้ให้บริการที่คุณเลือก ค่าจะถูกบันทึกไว้ในเครื่องนี้")
+            .setView(form)
+            .setPositiveButton(required ? "บันทึกและเริ่มใช้งาน" : "บันทึก", null)
+            .setNegativeButton("ยกเลิก", null)
+            .create();
+        dialog.setCancelable(!required);
+        dialog.setCanceledOnTouchOutside(!required);
+        dialog.setOnShowListener(d -> {
+            if (required) dialog.getButton(android.app.AlertDialog.BUTTON_NEGATIVE).setVisibility(View.GONE);
+            dialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+                String key = apiKey.getText().toString().trim();
+                String url = endpoint.getText().toString().trim();
+                String modelName = model.getText().toString().trim();
+                if (key.isEmpty() || url.isEmpty() || modelName.isEmpty()) {
+                    Toast.makeText(this, "กรุณากรอกทั้ง 3 ช่องให้ครบ", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (!(url.startsWith("https://") || url.startsWith("http://"))) {
+                    Toast.makeText(this, "Endpoint ต้องเป็น URL ที่ขึ้นต้นด้วย https:// หรือ http://", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                prefs.edit().putString("api_key", key).putString("endpoint", url).putString("model", modelName).apply();
+                Toast.makeText(this, "บันทึกการตั้งค่าแล้ว", Toast.LENGTH_SHORT).show();
+                dialog.dismiss();
+            });
+        });
+        dialog.show();
+    }
+    private void showRequiredSettings() {
+        showSettings(true);
     }
     private EditText field(String hint, String value, boolean secret) {
         EditText e = new EditText(this); e.setSingleLine(true); e.setText(value); e.setHint(hint);
